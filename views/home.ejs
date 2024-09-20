@@ -4,14 +4,101 @@
     <%- include("./partials/link") %>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Home</title><link rel="stylesheet" href="/css/note.css">
     <!-- <link rel="stylesheet" href="css/core.css"> -->
 </head>
 <body>
     <!-- <link rel="stylesheet" href="css/core.css"> -->
      
-    <%- include("./partials/nav") %>
-    <%= JSON.stringify(user)  %>
+    <!-- <%- include("./partials/nav") %> -->
+    <!-- <%= JSON.stringify(user)  %> -->
+    <div class="container"></div>
+        <h1>To-Do List</h1>
+        <form id="todoForm">
+            <input type="text" id="todoInput" placeholder="Add a new task" required>
+            <button type="submit">Add</button>
+        </form>
+        <ul id="todoList"></ul>
 
+        <h1>Notes</h1>
+        <form id="noteForm">
+            <input type="text" id="noteInput" placeholder="Add a new note" required>
+            <button type="submit">Add</button>
+        </form>
+        <ul id="noteList"></ul>
+    </div>
+
+    <script>
+        // Load todos and notes from local storage
+        const loadTodos = () => {
+            const todos = JSON.parse(localStorage.getItem('todos')) || [];
+            const todoList = document.getElementById('todoList');
+            todoList.innerHTML = '';
+            todos.forEach((todo, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${todo}</span>
+                    <button onclick="deleteTodo(${index})">Delete</button>
+                `;
+                todoList.appendChild(li);
+            });
+        };
+
+        const loadNotes = () => {
+            const notes = JSON.parse(localStorage.getItem('notes')) || [];
+            const noteList = document.getElementById('noteList');
+            noteList.innerHTML = '';
+            notes.forEach((note, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${note}</span>
+                    <button onclick="deleteNote(${index})">Delete</button>
+                `;
+                noteList.appendChild(li);
+            });
+        };
+
+        // Add a todo
+        document.getElementById('todoForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const todoInput = document.getElementById('todoInput');
+            const todos = JSON.parse(localStorage.getItem('todos')) || [];
+            todos.push(todoInput.value);
+            localStorage.setItem('todos', JSON.stringify(todos));
+            todoInput.value = '';
+            loadTodos();
+        });
+
+        // Delete a todo
+        function deleteTodo(index) {
+            const todos = JSON.parse(localStorage.getItem('todos')) || [];
+            todos.splice(index, 1);
+            localStorage.setItem('todos', JSON.stringify(todos));
+            loadTodos();
+        }
+
+        // Add a note
+        document.getElementById('noteForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const noteInput = document.getElementById('noteInput');
+            const notes = JSON.parse(localStorage.getItem('notes')) || [];
+            notes.push(noteInput.value);
+            localStorage.setItem('notes', JSON.stringify(notes));
+            noteInput.value = '';
+            loadNotes();
+        });
+
+        // Delete a note
+        function deleteNote(index) {
+            const notes = JSON.parse(localStorage.getItem('notes')) || [];
+            notes.splice(index, 1);
+            localStorage.setItem('notes', JSON.stringify(notes));
+            loadNotes();
+        }
+
+        // Initial load
+        loadTodos();
+        loadNotes();
+    </script>
 </body>
 </html>
